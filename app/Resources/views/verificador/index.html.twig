@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h4 class="center">Verificador de Diário</h4>
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="card-content">
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Selecionar diário</span>
+                                <input type="file" name="form[arquivo]" id="form_arquivo" required="required" accept="application/pdf">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Envie um relatório de conteúdos para iniciar">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a href="#" onclick="$('#btnSubmit').click()">Iniciar verificação</a>
+                        <button type="submit" id="btnSubmit" class="hide"></button>
+                    </div>
+                    {{ form_widget(form._token) }}
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if userMsg %}
+        <p class="red-text text-darken-4">{{ userMsg | raw }}</p>
+    {% endif %}
+    {% if disciplinas %}
+        {% for disciplina in disciplinas %}
+            <div class="row">
+                <div class="col s12">
+                    <div class="card 
+                         {% if disciplina.cargaHorariaCompleta %}green lighten-2{% endif %}
+                         {% if not disciplina.vaiFecharCargaHoraria %}yellow lighten-2{% endif %}
+                         ">
+                        <div class="card-content">
+                            <span class="card-title">
+                                {{ disciplina.nome }}
+                                {% if disciplina.cargaHorariaCompleta %}<i class="material-icons">done</i>{% endif %}
+                                {% if not disciplina.vaiFecharCargaHoraria %}<i class="material-icons">warning</i>{% endif %}
+                            </span>
+                            <div class="row">
+                                <div class="col s4">
+                                    Curso: {{ disciplina.curso }}
+                                </div>
+                                <div class="col s4">
+                                    Série: {{ disciplina.serie }}
+                                </div>
+                                <div class="col s4">
+                                    Turma: {{ disciplina.turma }}
+                                </div>
+                                <div class="col s4">
+                                    Docente: {{ disciplina.professor }}
+                                </div>
+                                <div class="col s4">
+                                    Carga Horária: {{ disciplina.cargaHoraria }}
+                                </div>
+                                <div class="col s4">
+                                    CH Ministrada: {{ disciplina.aulasComFrequencia }}
+                                </div>
+                                <div class="col s4">
+                                    Frequências Registradas: {{ disciplina.aulasPresenciais }}
+                                </div>
+                                <div class="col s4">
+                                    Conteúdos Registrados: {{ disciplina.conteudosRegistrados }} / {{ disciplina.conteudosInseridos }}
+                                </div>
+                                <div class="col s4">
+                                    Aulas Não Presenciais: {{ disciplina.aulasNaoPresenciais }} / {{ disciplina.maximoNaoPresencial }}
+                                </div>
+
+                                <div class="col s12">
+                                    {% if not disciplina.vaiFecharCargaHoraria %}
+                                        <p class="red-text text-darken-4">- Aulas faltantes para fechamento da CH: {{ disciplina.aulasFaltantes }} (usando todas não presenciais disponíveis)</p>
+                                    {% endif %}
+
+                                    {% if disciplina.registroConteudoAtrasado %}
+                                        <p class="red-text text-darken-4">- Atraso no registro de conteúdos a partir de {{ disciplina.primeiroConteudoBranco }}</p>
+                                    {% endif %}
+
+                                    {% if disciplina.registroFrequenciaAtrasado %}
+                                        <p class="red-text text-darken-4">- Existe dia letivo com conteúdo registrado sem frequência</p>
+                                    {% endif %}
+
+                                    {% if disciplina.conteudosADefinir %}
+                                        <p class="red-text text-darken-4">- Aulas lançadas manualmente com conteúdo a definir:</p>
+                                        {% for data in disciplina.conteudosADefinir %}
+                                            <p class="red-text text-darken-4">&nbsp; * {{ data }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
