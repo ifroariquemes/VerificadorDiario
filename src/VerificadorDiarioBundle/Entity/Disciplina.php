@@ -15,10 +15,11 @@ class Disciplina {
     private $primeiroConteudoBranco;
     private $conteudosInseridos;
     private $conteudosRegistrados;
-    private $conteudosADefinir = array();
+    private $conteudosADefinir;
 
     public function __construct() {
-        $this->primeiroConteudoBranco = new \DateTime();
+        $this->conteudosADefinir = array();
+        $this->conteudosRegistrados = 0;
     }
 
     function getCargaHoraria() {
@@ -94,7 +95,9 @@ class Disciplina {
     }
 
     function getPrimeiroConteudoBranco() {
-        return $this->primeiroConteudoBranco->format('d/m/Y');
+        if (!empty($this->primeiroConteudoBranco)) {
+            return $this->primeiroConteudoBranco->format('d/m/Y');
+        }
     }
 
     function setPrimeiroConteudoBranco($conteudosEmBranco) {
@@ -170,6 +173,10 @@ class Disciplina {
 
     function getAulasFaltantes() {
         return $this->cargaHoraria - ( $this->conteudosInseridos + $this->getMaximoNaoPresencial() );
+    }
+
+    function adicionarConteudosRegistrados($conteudos) {
+        $this->conteudosRegistrados += $conteudos;
     }
 
 }
