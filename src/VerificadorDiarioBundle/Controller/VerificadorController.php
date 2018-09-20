@@ -19,7 +19,7 @@ class VerificadorController extends Controller {
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request) {
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder(null, ['csrf_protection' => false])
                 ->add('arquivo', FileType::class, ['label' => 'Arquivo', 'required' => true])
                 ->getForm();
 
@@ -68,7 +68,7 @@ class VerificadorController extends Controller {
             preg_match_all('/(\d{1,3}) - (\d{2}\/\d{2}\/\d{4}) \w{3}\t\w\t\d{2}:\d{2}\t\d{2}:\d{2}/', $page->getText(), $conteudosNaPagina);
             preg_match_all('/(\d{1,3}) - (\d{2}\/\d{2}\/\d{4}) \w{3}\t\w\t\d{2}:\d{2}\t\d{2}:\d{2}-\t\t\t/', $page->getText(), $conteudosEmBranco);
             $disciplina->adicionarConteudosRegistrados(count($conteudosNaPagina[0] ?? []) - count($conteudosEmBranco[0] ?? []));
-            if (!empty($conteudosEmBranco)) {
+            if (!empty($conteudosEmBranco[2])) {
                 $disciplina->setPrimeiroConteudoBranco($conteudosEmBranco[2][0]);
             }
 
